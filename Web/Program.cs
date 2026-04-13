@@ -25,13 +25,24 @@ app.MapOpenApi();
 if (!app.Environment.IsDevelopment())
     app.Lifetime.ApplicationStarted.Register(() =>
     {
-        Process.Start(
-            new ProcessStartInfo
-            {
-                FileName = "http://localhost:5000/swagger",
-                UseShellExecute = true,
-            }
-        );
+        try
+        {
+            Process.Start(
+                new ProcessStartInfo
+                {
+                    FileName = "http://localhost:5000/swagger",
+                    UseShellExecute = true,
+                }
+            );
+        }
+        catch
+        {
+            app.Services.CreateScope()
+                .ServiceProvider.GetRequiredService<ILogger<Program>>()
+                .LogWarning(
+                    "Failed to open browser automatically. Please navigate to http://localhost:5000/swagger"
+                );
+        }
     });
 
 app.UseAuthorization();

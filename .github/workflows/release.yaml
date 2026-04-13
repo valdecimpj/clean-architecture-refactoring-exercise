@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        runtime: [win-x64, linux-x64, linux-arm64, osx-x64, osx-arm64]
+        runtime: [win-x86, linux-x64, linux-arm64, osx-x64, osx-arm64]
 
     steps:
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            app-win-x64/app-win-x64.zip
+            app-win-x86/app-win-x86.zip
             app-linux-x64/app-linux-x64.zip
             app-linux-arm64/app-linux-arm64.zip
             app-osx-x64/app-osx-x64.zip
