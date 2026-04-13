@@ -5,11 +5,12 @@ using Infrastructure.Data;
 namespace Infrastructure.Repository;
 
 public class CustomerRepository(DirtyStoreDbContext dbContext)
-    : BaseEntityRepository<CustomerEntity>(dbContext),
+    : BaseEntityRepository<CustomerDatabaseEntity>(dbContext),
         ICustomerRepository
 {
     public async Task<CustomerEntity?> GetById(Guid customerId) =>
-        await dbContext.Customers.FindAsync(customerId);
+        (await dbContext.Customers.FindAsync(customerId))?.ToCustomerEntity();
 
-    public new async Task Save(CustomerEntity customer) => await base.Save(customer);
+    public async Task Save(CustomerEntity customer) =>
+        await Save(CustomerDatabaseEntity.FromCustomerEntity(customer));
 }

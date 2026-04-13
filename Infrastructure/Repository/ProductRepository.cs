@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Repository;
 
 public class ProductRepository(DirtyStoreDbContext dbContext)
-    : BaseEntityRepository<ProductEntity>(dbContext),
+    : BaseEntityRepository<ProductDatabaseEntity>(dbContext),
         IProductRepository
 {
     public async Task<IEnumerable<ProductEntity>> GetByCodes(
@@ -25,8 +25,9 @@ public class ProductRepository(DirtyStoreDbContext dbContext)
             );
         }
 
-        return products;
+        return products.Select(p => p.ToProductEntity());
     }
 
-    public new async Task Save(ProductEntity product) => await base.Save(product);
+    public async Task Save(ProductEntity product) =>
+        await Save(ProductDatabaseEntity.FromProductEntity(product));
 }

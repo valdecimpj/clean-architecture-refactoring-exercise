@@ -4,13 +4,13 @@ public class ProductEntity
 {
     public string Code { get; private set; }
     public string Name { get; private set; }
-    public decimal Price { get; private set; }
+    public decimal CurrentPrice { get; private set; }
 
-    public ProductEntity(string code, string name, decimal price)
+    public ProductEntity(string code, string name, decimal currentPrice)
     {
         Code = code;
         Name = name;
-        Price = price;
+        CurrentPrice = currentPrice;
         Validate();
     }
 
@@ -22,7 +22,7 @@ public class ProductEntity
         if (string.IsNullOrWhiteSpace(Name))
             throw new ArgumentException("Name cannot be empty");
 
-        if (Price < 0)
-            throw new ArgumentException("Price must be positive");
+        if (CurrentPrice < 0)
+            throw new ArgumentException("Current price must be positive");
     }
 }

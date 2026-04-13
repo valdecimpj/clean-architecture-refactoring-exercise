@@ -29,7 +29,7 @@ public class CreateOrderUseCase(
             else
                 await sessionLogRepository.Save(
                     sessionId,
-                    $"Order item with product code {orderItem.ProductCode} has zero quantity and will be ignored."
+                    $"Order item with index {createOrderRequest.OrderItems.IndexOf(orderItem) + 1} and product code {orderItem.ProductCode} has zero quantity and will be ignored."
                 );
         }
 

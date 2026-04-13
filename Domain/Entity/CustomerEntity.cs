@@ -16,6 +16,7 @@ public class CustomerEntity
     {
         Id = id;
         Name = name;
+        Validate();
     }
 
     private void Validate()
