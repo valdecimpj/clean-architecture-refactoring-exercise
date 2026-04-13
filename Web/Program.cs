@@ -6,6 +6,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
+builder.Services.AddScoped<ExceptionHandlerMiddleware>();
 builder.Services.RegisterDirtyStoreModule(builder.Configuration);
 
 var app = builder.Build();
@@ -29,5 +30,6 @@ else
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.MapControllers();
 app.Run();
