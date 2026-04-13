@@ -1,3 +1,5 @@
+using Domain.Exceptions;
+
 namespace Domain.Entity;
 
 public class ProductEntity
@@ -17,12 +19,12 @@ public class ProductEntity
     private void Validate()
     {
         if (string.IsNullOrWhiteSpace(Code))
-            throw new ArgumentException("Code cannot be empty");
+            throw new BadUserInputException("Code cannot be empty");
 
         if (string.IsNullOrWhiteSpace(Name))
-            throw new ArgumentException("Name cannot be empty");
+            throw new BadUserInputException("Name cannot be empty");
 
         if (CurrentPrice < 0)
-            throw new ArgumentException("Current price must be positive");
+            throw new BadUserInputException("Current price must be positive");
     }
 }

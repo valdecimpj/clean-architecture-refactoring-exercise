@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Infrastructure.Data;
 using Web;
 
@@ -17,19 +18,24 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.EnsureCreatedAsync();
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.MapOpenApi();
-}
-else
-{
-    app.MapOpenApi();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapOpenApi();
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = "http://localhost:5000/swagger",
+                UseShellExecute = true,
+            }
+        );
+    });
+
 app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.MapControllers();
+
 app.Run();

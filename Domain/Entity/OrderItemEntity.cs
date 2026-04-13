@@ -1,3 +1,5 @@
+using Domain.Exceptions;
+
 namespace Domain.Entity;
 
 public class OrderItemEntity
@@ -26,9 +28,9 @@ public class OrderItemEntity
     private void Validate()
     {
         if (Quantity <= 0)
-            throw new ArgumentException("Quantity must be greater than zero");
+            throw new BadUserInputException("Quantity must be greater than zero");
 
         if (Total < 0)
-            throw new ArgumentException("Total must be positive");
+            throw new BadUserInputException("Total must be positive");
     }
 }

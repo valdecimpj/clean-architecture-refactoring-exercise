@@ -1,5 +1,6 @@
 using Application.Repository;
 using Domain.Entity;
+using Domain.Exceptions;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,7 @@ public class ProductRepository(DirtyStoreDbContext dbContext)
         {
             var foundCodes = products.Select(_ => _.Code);
             var notFoundCodes = codes.Except(foundCodes);
-            throw new ArgumentException(
+            throw new BadUserInputException(
                 $"Products with codes {string.Join(", ", notFoundCodes)} not found."
             );
         }
@@ -29,5 +30,5 @@ public class ProductRepository(DirtyStoreDbContext dbContext)
     }
 
     public async Task Save(ProductEntity product) =>
-        await Save(ProductDatabaseEntity.FromProductEntity(product));
+        await Create(ProductDatabaseEntity.FromProductEntity(product));
 }

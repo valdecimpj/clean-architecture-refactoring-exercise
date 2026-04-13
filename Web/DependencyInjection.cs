@@ -32,13 +32,15 @@ namespace Web
                 ?? throw new Exception("Connection string not found");
 
             services.AddDbContext<DirtyStoreDbContext>(options =>
-                options.UseSqlite(connectionString).UseSnakeCaseNamingConvention()
-            );
+            {
+                options.UseSqlite(connectionString).UseSnakeCaseNamingConvention();
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            });
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
-            services.AddTransient<ISessionLogRepository, SessionLogRepository>();
+            services.AddScoped<ISessionLogRepository, SessionLogRepository>();
         }
     }
 }

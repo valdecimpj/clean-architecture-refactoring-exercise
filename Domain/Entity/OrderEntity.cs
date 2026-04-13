@@ -1,4 +1,5 @@
 using Domain.Enum;
+using Domain.Exceptions;
 
 namespace Domain.Entity;
 
@@ -40,13 +41,13 @@ public class OrderEntity
     private void Validate()
     {
         if (!OrderItems.Any())
-            throw new ArgumentException("Order must have at least one item");
+            throw new BadUserInputException("Order must have at least one item");
     }
 
     public void Cancel()
     {
         if (Status == OrderStatusEnum.Cancelled)
-            throw new InvalidOperationException("Order is already cancelled");
+            throw new BadUserInputException("Order is already cancelled");
 
         Status = OrderStatusEnum.Cancelled;
     }

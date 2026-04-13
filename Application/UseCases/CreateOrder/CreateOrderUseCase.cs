@@ -2,6 +2,7 @@ using Application.Repository;
 using Application.UseCases.CreateCustomer.Dto;
 using Domain.Entity;
 using Domain.Enum;
+using Domain.Exceptions;
 
 namespace Application.UseCases.CreateOrder;
 
@@ -16,11 +17,9 @@ public class CreateOrderUseCase(
     {
         var customer =
             await customerRepository.GetById(createOrderRequest.CustomerId)
-            ?? throw new ArgumentException("Customer not found with the provided ID");
+            ?? throw new BadUserInputException("Customer not found with the provided ID");
 
         List<OrderItemDto> nonZeroQuantityItems = new();
-
-        var sessionId = Guid.NewGuid();
 
         foreach (var orderItem in createOrderRequest.OrderItems)
         {
@@ -28,7 +27,6 @@ public class CreateOrderUseCase(
                 nonZeroQuantityItems.Add(orderItem);
             else
                 await sessionLogRepository.Save(
-                    sessionId,
                     $"Order item with index {createOrderRequest.OrderItems.IndexOf(orderItem) + 1} and product code {orderItem.ProductCode} has zero quantity and will be ignored."
                 );
         }
@@ -47,12 +45,13 @@ public class CreateOrderUseCase(
             .ToList();
 
         var order = new OrderEntity(customer, OrderStatusEnum.Open, orderItemEntities);
-        var orderNumber = await orderRepository.Save(order);
+        var orderNumber = await orderRepository.Create(order);
+        var savedOrder = await orderRepository.GetByNumber(orderNumber);
 
         return new(
             $"Order {orderNumber} with total value {order.TotalValue} created successfully",
-            order,
-            await sessionLogRepository.GetBySessionId(sessionId)
+            savedOrder!,
+            await sessionLogRepository.GetForSession()
         );
     }
 }

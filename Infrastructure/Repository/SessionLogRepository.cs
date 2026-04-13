@@ -4,22 +4,14 @@ namespace Infrastructure.Repository;
 
 public class SessionLogRepository : ISessionLogRepository
 {
-    private readonly Dictionary<Guid, List<string>> _sessionLogs = new();
+    private readonly List<string> _sessionLogs = new();
 
-    public Task<IEnumerable<string>> GetBySessionId(Guid sessionId)
+    public Task<IEnumerable<string>> GetForSession() =>
+        Task.FromResult(_sessionLogs.AsEnumerable());
+
+    public Task Save(string message)
     {
-        if (_sessionLogs.TryGetValue(sessionId, out var logs))
-            return Task.FromResult(logs.AsEnumerable());
-
-        return Task.FromResult(Enumerable.Empty<string>());
-    }
-
-    public Task Save(Guid sessionId, string message)
-    {
-        if (!_sessionLogs.ContainsKey(sessionId))
-            _sessionLogs[sessionId] = new List<string>();
-
-        _sessionLogs[sessionId].Add(message);
+        _sessionLogs.Add(message);
         return Task.CompletedTask;
     }
 }

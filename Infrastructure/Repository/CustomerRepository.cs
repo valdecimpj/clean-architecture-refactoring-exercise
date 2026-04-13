@@ -12,5 +12,5 @@ public class CustomerRepository(DirtyStoreDbContext dbContext)
         (await dbContext.Customers.FindAsync(customerId))?.ToCustomerEntity();
 
     public async Task Save(CustomerEntity customer) =>
-        await Save(CustomerDatabaseEntity.FromCustomerEntity(customer));
+        await Create(CustomerDatabaseEntity.FromCustomerEntity(customer));
 }

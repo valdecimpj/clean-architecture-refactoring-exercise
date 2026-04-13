@@ -1,4 +1,5 @@
 using Application.Repository;
+using Domain.Exceptions;
 
 namespace Application.UseCases.CancelOrder;
 
@@ -8,10 +9,10 @@ public class CancelOrderUseCase(IOrderRepository orderRepository)
     {
         var order =
             await orderRepository.GetByNumber(number)
-            ?? throw new ArgumentException($"Order with number {number} not found");
+            ?? throw new BadUserInputException($"Order with number {number} not found");
 
         order.Cancel();
-        await orderRepository.Save(order);
+        await orderRepository.Update(order);
         return new CancelOrderResponse($"Order with number {number} cancelled successfully");
     }
 }

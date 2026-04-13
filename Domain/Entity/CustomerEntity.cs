@@ -1,3 +1,5 @@
+using Domain.Exceptions;
+
 namespace Domain.Entity;
 
 public class CustomerEntity
@@ -22,9 +24,9 @@ public class CustomerEntity
     private void Validate()
     {
         if (Id == Guid.Empty)
-            throw new ArgumentException("Id cannot be empty");
+            throw new BadUserInputException("Id cannot be empty");
 
         if (string.IsNullOrWhiteSpace(Name))
-            throw new ArgumentException("Name cannot be empty");
+            throw new BadUserInputException("Name cannot be empty");
     }
 }

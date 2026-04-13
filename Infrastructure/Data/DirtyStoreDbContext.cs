@@ -18,13 +18,22 @@ public class DirtyStoreDbContext : DbContext
         var orderEntity = modelBuilder.Entity<OrderDatabaseEntity>();
         orderEntity.HasKey(order => order.Number);
         orderEntity.Property(order => order.Number).ValueGeneratedOnAdd();
-        orderEntity.HasMany(order => order.OrderItems);
-        orderEntity.HasOne(order => order.Customer);
+        orderEntity
+            .HasMany(order => order.OrderItems)
+            .WithOne()
+            .HasForeignKey(item => item.OrderNumber);
+        orderEntity
+            .HasOne(order => order.Customer)
+            .WithMany()
+            .HasForeignKey(order => order.CustomerId);
 
         var orderItemEntity = modelBuilder.Entity<OrderItemDatabaseEntity>();
         orderItemEntity.Property<Guid>("order_item_id").HasColumnType("uuid").ValueGeneratedOnAdd();
         orderItemEntity.HasKey("order_item_id");
-        orderItemEntity.HasOne(item => item.Product);
+        orderItemEntity
+            .HasOne(item => item.Product)
+            .WithMany()
+            .HasForeignKey(item => item.ProductCode);
 
         var productEntity = modelBuilder.Entity<ProductDatabaseEntity>();
         productEntity.HasKey(product => product.Code);

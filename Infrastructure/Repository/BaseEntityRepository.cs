@@ -8,15 +8,17 @@ namespace Infrastructure.Repository
     {
         protected readonly DirtyStoreDbContext dbContext = dbContext;
 
-        public async Task<TEntity> Save(TEntity entity)
+        public async Task<TEntity> Create(TEntity entity)
         {
-            if (dbContext.Entry(entity).State == EntityState.Detached)
-                dbContext.Set<TEntity>().Add(entity);
-            else
-                dbContext.Set<TEntity>().Update(entity);
-
+            dbContext.Set<TEntity>().Add(entity);
             await dbContext.SaveChangesAsync();
             return entity;
+        }
+
+        public async Task Update(TEntity entity)
+        {
+            dbContext.Set<TEntity>().Entry(entity).State = EntityState.Modified;
+            await dbContext.SaveChangesAsync();
         }
     }
 }

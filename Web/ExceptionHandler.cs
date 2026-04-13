@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Diagnostics;
+using Application.Repository;
+using Domain.Exceptions;
 
 namespace Web;
 
-public class ExceptionHandlerMiddleware : IMiddleware
+public class ExceptionHandlerMiddleware(ISessionLogRepository sessionLogRepository) : IMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -10,20 +11,19 @@ public class ExceptionHandlerMiddleware : IMiddleware
         {
             await next(context);
         }
-        catch (ArgumentException exception)
-        {
-            await HandleBadRequestException(context, exception);
-        }
-        catch (InvalidOperationException exception)
+        catch (BadUserInputException exception)
         {
             await HandleBadRequestException(context, exception);
         }
     }
 
-    private Task HandleBadRequestException(HttpContext context, Exception exception)
+    private async Task HandleBadRequestException(HttpContext context, Exception exception)
     {
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
         context.Response.ContentType = "application/json";
-        return context.Response.WriteAsJsonAsync(new { exception.Message });
+
+        await context.Response.WriteAsJsonAsync(
+            new { exception.Message, Logs = await sessionLogRepository.GetForSession() }
+        );
     }
 }

@@ -27,9 +27,16 @@ public class OrderRepository(DirtyStoreDbContext dbContext)
                 .FirstOrDefaultAsync(_ => _.Number == number)
         )?.ToOrderEntity();
 
-    public async Task<int> Save(OrderEntity order)
+    public async Task<int> Create(OrderEntity order)
     {
-        await Save(OrderDatabaseEntity.FromOrderEntity(order));
-        return order.Number;
+        var orderDatabaseEntity = OrderDatabaseEntity.FromOrderEntity(order);
+        var savedOrder = await Create(orderDatabaseEntity);
+        return savedOrder.Number;
+    }
+
+    public async Task Update(OrderEntity order)
+    {
+        var orderDatabaseEntity = OrderDatabaseEntity.FromOrderEntity(order);
+        await Update(orderDatabaseEntity);
     }
 }
