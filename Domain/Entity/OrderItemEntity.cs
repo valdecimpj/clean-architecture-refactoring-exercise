@@ -2,22 +2,21 @@ namespace Domain.Entity;
 
 public class OrderItemEntity
 {
-    public ProductEntity ProductEntity { get; private set; }
+    public ProductEntity Product { get; private set; } = null!;
     public int Quantity { get; private set; }
     public decimal Total { get; private set; }
     public decimal UnitPrice => Total / Quantity;
 
     public OrderItemEntity(ProductEntity productEntity, int quantity)
     {
-        ProductEntity = productEntity;
+        Product = productEntity;
         Quantity = quantity;
         Total = productEntity.Price * quantity;
         Validate();
     }
 
-    public OrderItemEntity(ProductEntity productEntity, int quantity, decimal total)
+    public OrderItemEntity(int quantity, decimal total)
     {
-        ProductEntity = productEntity;
         Quantity = quantity;
         Total = total;
         Validate();

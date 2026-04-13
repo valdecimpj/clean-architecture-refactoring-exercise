@@ -5,10 +5,10 @@ namespace Domain.Entity;
 public class OrderEntity
 {
     public int Number { get; private set; }
-    public CustomerEntity Customer { get; private set; }
+    public CustomerEntity Customer { get; private set; } = null!;
     public OrderStatusEnum Status { get; private set; }
-    public IList<OrderItemEntity> OrderItemEntities { get; private set; }
-    public decimal TotalValue => OrderItemEntities.Sum(item => item.Total);
+    public IList<OrderItemEntity> OrderItems { get; private set; } = null!;
+    public decimal TotalValue => OrderItems.Sum(item => item.Total);
 
     public OrderEntity(
         CustomerEntity customer,
@@ -19,21 +19,14 @@ public class OrderEntity
         Number = 0;
         Customer = customer;
         Status = status;
-        OrderItemEntities = orderItemEntities;
+        OrderItems = orderItemEntities;
         Validate();
     }
 
-    public OrderEntity(
-        int number,
-        CustomerEntity customer,
-        OrderStatusEnum status,
-        IList<OrderItemEntity> orderItemEntities
-    )
+    public OrderEntity(int number, OrderStatusEnum status)
     {
         Number = number;
-        Customer = customer;
         Status = status;
-        OrderItemEntities = orderItemEntities;
         Validate();
     }
 
@@ -42,7 +35,7 @@ public class OrderEntity
         if (Number <= 0)
             throw new ArgumentException("Order number must be greater than zero");
 
-        if (!OrderItemEntities.Any())
+        if (!OrderItems.Any())
             throw new ArgumentException("Order must have at least one item");
     }
 
